@@ -1,0 +1,243 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -768,
+        16
+      ],
+      "id": "b0d9e3da-19e4-4f53-af9b-58f85c161aad",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "analyze-data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -960,
+        16
+      ],
+      "id": "81cebad6-3a12-4d26-9a8e-bca9c72afaa9",
+      "name": "Webhook",
+      "webhookId": "2690d6c9-8cd0-40b2-964a-d234aa77c51c"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b9c1c84e-28de-434a-9783-668660f9c41a",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -576,
+        16
+      ],
+      "id": "83476fde-51aa-4bb0-828d-73367a0dfe1b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8000/",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -144,
+        16
+      ],
+      "id": "30b521f5-4a6f-4fb0-aa9e-7f05e2cfb296",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "content": "URL: http://host.docker.internal:8000/\nhost.docker.internal se n8n Docker ke bahar Windows par chal rahe Python API ko access karta hai\n\n\n\nBrowser → 127.0.0.1:8000\nn8n     → host.docker.internal:8000",
+        "height": 432
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1456,
+        -336
+      ],
+      "typeVersion": 1,
+      "id": "55cb6821-fcd9-400b-a98f-d3366405177e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "hr row ke liye ye alg alg req bhej rha jisse bahut hi jyada req ho ja rhi , to hum n8n me json ka use krke 1000 items ko ek sath as a single itme in form of array bhejenge jisse ek hi req jyegi\n\ndata ek array bn gya\njisme data[0] mtlb row 0  hai-----aise data[999] mtlb row 999 hain\n",
+        "height": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1440,
+        96
+      ],
+      "typeVersion": 1,
+      "id": "7474f054-0472-44f0-a452-40c4f67a5862",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: {\n      data: $input.all().map(item => item.json)\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -368,
+        16
+      ],
+      "id": "ab398997-d9ce-451d-adaa-7880814d5443",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are only a report writer.\n\nIMPORTANT:\nDo NOT calculate any correlation yourself.\nDo NOT create any new numbers.\nDo NOT assume relationships between variables.\n\nThe Python program has already performed all calculations.\n\nYour job is ONLY to explain the results that are explicitly present in the JSON.\n\nFor correlation analysis, ONLY use the values inside:\n\"correlations\"\n\nEach value inside \"correlations\" represents:\n\nvariable → Average_Score\n\nFor example:\n\"Study_Hours_Per_Day\": 0.25\n\nmeans:\nStudy Hours Per Day vs Average Score = 0.25\n\nIt does NOT mean:\nStudy Hours vs Attendance.\n\nCreate a simple report with:\n\n1. Overall Performance\n2. Grade Distribution\n3. Strongest and Weakest Subjects\n4. Study Hours vs Average Score\n5. Attendance vs Average Score\n6. Stress vs Average Score\n7. Sleep vs Average Score\n8. Major-wise Performance\n9. Key Insights\n10. Recommendations\n\nUse ONLY the information present in the JSON.\n\nIf information is not available, write:\n\"Not available in the provided analysis.\"\n\nNever invent a correlation or number.\n\nAnalysis JSON:\n{{ JSON.stringify($json) }}",
+        "messages": {
+          "messageValues": [
+            {
+              "type": "AIMessagePromptTemplate",
+              "message": "="
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        96,
+        16
+      ],
+      "id": "fd2099ef-528c-480e-8737-b180008da81d",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "llama3.2:3b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        96,
+        272
+      ],
+      "id": "ed849591-6af0-40fa-88fe-3760ba9fe352",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "p3nwmNp2pV8tGB2m",
+          "name": "Ollama account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "76003cd0-e861-4312-82bd-b50bbf8d07c9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "862f2ed6b21feacfcaaa7a2307b9b0ffe2080e50c96019aa05315b93d2396a83"
+  },
+  "nodeGroups": [],
+  "id": "TyOccQ5HCx5brQDZ",
+  "tags": []
+}
